@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скорборд для тенниса и паделя</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--primary-color);
+            line-height: 1.6;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-type {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .game-type button {
+            padding: 0.5rem 1rem;
+            background: var(--light-color);
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .game-type button.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .game-settings {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .setting-group {
+            margin-bottom: 1rem;
+        }
+
+        .setting-group h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+
+        .select-players {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .player-select {
+            background-color: var(--light-color);
+            padding: 1rem;
+            border-radius: 0.25rem;
+        }
+
+        .player-select h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        select, button, input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .action-buttons button {
+            flex: 1;
+        }
+
+        .scoreboard {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .match-info {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+        }
+
+        .team-scores {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .team {
+            padding: 1rem;
+            border-radius: 0.25rem;
+            background-color: var(--light-color);
+            position: relative;
+        }
+
+        .team.serving::before {
+            content: '•';
+            position: absolute;
+            top: 1rem;
+            left: 0.5rem;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .team-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .score-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .points-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .game-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-group button {
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .team1-point {
+            background-color: #3498db;
+        }
+
+        .team2-point {
+            background-color: #e74c3c;
+        }
+
+        .utility-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .utility-buttons button {
+            background-color: var(--dark-color);
+            padding: 0.75rem;
+        }
+
+        .utility-button {
+            background-color: var(--dark-color) !important;
+        }
+
+        .undo-button {
+            background-color: var(--warning-color) !important;
+        }
+
+        .toggle-button {
+            background-color: var(--primary-color) !important;
+        }
+
+        .new-game-button {
+            background-color: var(--success-color) !important;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-title {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-buttons button {
+            width: auto;
+            padding: 0.5rem 1rem;
+        }
+
+        .player-manager {
+            margin-top: 1.5rem;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-list {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .player-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .player-item button {
+            width: auto;
+            padding: 0.25rem 0.5rem;
+            background-color: var(--accent-color);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-right: 0.25rem;
+        }
+
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            border-radius: 0.25rem 0.25rem 0 0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-scores {
+                grid-template-columns: 1fr;
+            }
+
+            .game-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .serving-player {
+            margin-left: 0.5rem;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .match-history {
+            margin-top: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .history-item {
+            padding: 0.25rem;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Скорборд для тенниса и паделя</h1>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="game">Игра</div>
+            <div class="tab" data-tab="players">Управление игроками</div>
+        </div>
+
+        <div class="tab-content active" data-tab="game">
+            <div class="game-type">
+                <button class="active" data-type="tennis">Теннис</button>
+                <button data-type="padel">Падель</button>
+            </div>
+
+            <div class="game-settings" id="gameSetup">
+                <h2>Настройки матча</h2>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3>Тип игры</h3>
+                        <select id="gameTypeSelect">
+                            <option value="singles">Одиночная игра</option>
+                            <option value="doubles">Парная игра</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Количество сетов</h3>
+                        <select id="setsCountSelect">
+                            <option value="1">1 сет</option>
+                            <option value="3" selected>3 сета (до 2 побед)</option>
+                            <option value="5">5 сетов (до 3 побед)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Настройки тай-брейка</h3>
+                        <select id="tiebreakSelect">
+                            <option value="automatic">Автоматически (6-6)</option>
+                            <option value="custom">Пользовательский</option>
+                            <option value="disabled">Отключен</option>
+                        </select>
+                        <div id="customTiebreakSettings" style="display: none; margin-top: 0.5rem;">
+                            <label>Начинать тай-брейк при счете:</label>
+                            <select id="tiebreakScoreSelect">
+                                <option value="6-6">6-6</option>
+                                <option value="7-7">7-7</option>
+                                <option value="8-8">8-8</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="select-players">
+                    <div class="player-select">
+                        <h4>Команда 1</h4>
+                        <select id="team1Player1">
+                            <option value="">Выберите игрока 1</option>
+                        </select>
+                        <select id="team1Player2" style="display: none;">
+                            <option value="">Выберите игрока 2</option>
+                        </select>
+                    </div>
+
+                    <div class="player-select">
+                        <h4>Команда 2</h4>
+                        <select id="team2Player1">
+                            <option value="">Выберите игрока 1</option>
+                        </select>
+                        <select id="team2Player2" style="display: none;">
+                            <option value="">Выберите игрока 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="startGameBtn">Начать игру</button>
+                </div>
+            </div>
+
+            <div class="scoreboard" id="scoreboardContainer">
+                <div class="score-header">
+                    <div class="match-info">
+                        <div id="matchType">Теннис - Одиночная игра</div>
+                        <div id="matchFormat">3 сета (до 2 побед)</div>
+                        <div id="servingInfo">Подача: <span id="currentServer"></span></div>
+                    </div>
+                    <div>
+                        <button class="utility-button" id="changeServeBtn">Сменить подачу</button>
+                    </div>
+                </div>
+
+                <div class="team-scores">
+                    <div class="team" id="team1Container">
+                        <div class="team-name" id="team1Name">Команда 1</div>
+                        <div class="score-row">
+                            <div class="score-label">Сеты:</div>
+                            <div class="score-value" id="team1Sets">0</div>
+                        </div>
+                        <div class="score-row">
+                            <div class="score-label">Геймы:</div>
+                            <div class="score-value" id="team1Games">0</div>
+                        </div>
+                        <div class="score-row">
+                            <div class="score-label">Очки:</div>
+                            <div class="points-value" id="team1Points">0</div>
+                        </div>
+                    </div>
+
+                    <div class="team" id="team2Container">
+                        <div class="team-name" id="team2Name">Команда 2</div>
+                        <div class="score-row">
+                            <div class="score-label">Сеты:</div>
+                            <div class="score-value" id="team2Sets">0</div>
+                        </div>
+                        <div class="score-row">
+                            <div class="score-label">Геймы:</div>
+                            <div class="score-value" id="team2Games">0</div>
+                        </div>
+                        <div class="score-row">
+                            <div class="score-label">Очки:</div>
+                            <div class="points-value" id="team2Points">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-controls">
+                    <div class="control-group">
+                        <button class="team1-point" id="team1PointBtn">Очко команде 1</button>
+                    </div>
+                    <div class="control-group">
+                        <button class="team2-point" id="team2PointBtn">Очко команде 2</button>
+                    </div>
+                </div>
+
+                <div class="match-history" id="matchHistory">
+                    <div class="history-item">Начало матча</div>
+                </div>
+
+                <div class="utility-buttons">
+                    <button class="undo-button" id="undoBtn">Отменить последнее действие</button>
+                    <button class="toggle-button" id="switchSidesBtn">Сменить стороны</button>
+                    <button class="toggle-button" id="tiebreakToggleBtn">Включить/выключить тай-брейк</button>
+                    <button class="new-game-button" id="newGameBtn">Новая игра</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" data-tab="players">
+            <div class="player-manager">
+                <h2>Управление списком игроков</h2>
+                <div>
+                    <input type="text" id="newPlayerName" placeholder="Имя нового игрока">
+                    <button id="addPlayerBtn">Добавить игрока</button>
+                </div>
+                <div class="player-list" id="playerList">
+                    <!-- Player list will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="endGameModal">
+            <div class="modal-content">
+                <h2 class="modal-title">Матч завершен!</h2>
+                <div id="winnerDisplay"></div>
+                <div id="finalScore"></div>
+                <div class="modal-buttons">
+                    <button id="newGameModalBtn">Новая игра</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2025 Скорборд для тенниса и паделя
+        </footer>
+    </div>
+
+    <script>
+        // Хранение данных игроков
+        let players = JSON.parse(localStorage.getItem('players')) || [
+            'Игрок 1', 'Игрок 2', 'Игрок 3', 'Игрок 4', 'Игрок 5', 
+            'Игрок 6', 'Игрок 7', 'Игрок 8', 'Игрок 9', 'Игрок 10'
+        ];
+
+        // Состояние игры
+        let gameState = {
+            gameType: 'tennis', // tennis или padel
+            matchType: 'singles', // singles или doubles
+            setsToWin: 2, // количество сетов для победы
+            tiebreakSettings: {
+                mode: 'automatic', // automatic, custom, disabled
+                startScore: '6-6' // при каком счете начинать тай-брейк
+            },
+            team1: {
+                name: 'Команда 1',
+                players: ['', ''],
+                sets: 0,
+                games: 0,
+                points: 0,
+                tiebreakPoints: 0
+            },
+            team2: {
+                name: 'Команда 2',
+                players: ['', ''],
+                sets: 0,
+                games: 0,
+                points: 0,
+                tiebreakPoints: 0
+            },
+            currentSet: 1,
+            totalSets: 3,
+            currentServer: 0, // 0: team1player1, 1: team2player1, 2: team1player2, 3: team2player2
+            isTiebreak: false,
+            tiebreakServer: 0,
+            tiebreakPointCounter: 0,
+            history: [],
+            isGameOver: false
+        };
+
+        // Основные элементы DOM
+        const gameTypeButtons = document.querySelectorAll('.game-type button');
+        const gameTypeSelect = document.getElementById('gameTypeSelect');
+        const setsCountSelect = document.getElementById('setsCountSelect');
+        const tiebreakSelect = document.getElementById('tiebreakSelect');
+        const customTiebreakSettings = document.getElementById('customTiebreakSettings');
+        const tiebreakScoreSelect = document.getElementById('tiebreakScoreSelect');
+        
+        const team1Player1Select = document.getElementById('team1Player1');
+        const team1Player2Select = document.getElementById('team1Player2');
+        const team2Player1Select = document.getElementById('team2Player1');
+        const team2Player2Select = document.getElementById('team2Player2');
+        
+        const startGameBtn = document.getElementById('startGameBtn');
+        const scoreboardContainer = document.getElementById('scoreboardContainer');
+        const gameSetup = document.getElementById('gameSetup');
+        
+        const team1NameDisplay = document.getElementById('team1Name');
+        const team2NameDisplay = document.getElementById('team2Name');
+        const team1SetsDisplay = document.getElementById('team1Sets');
+        const team2SetsDisplay = document.getElementById('team2Sets');
+        const team1GamesDisplay = document.getElementById('team1Games');
+        const team2GamesDisplay = document.getElementById('team2Games');
+        const team1PointsDisplay = document.getElementById('team1Points');
+        const team2PointsDisplay = document.getElementById('team2Points');
+        
+        const matchTypeDisplay = document.getElementById('matchType');
+        const matchFormatDisplay = document.getElementById('matchFormat');
+        const currentServerDisplay = document.getElementById('currentServer');
+        
+        const team1PointBtn = document.getElementById('team1PointBtn');
+        const team2PointBtn = document.getElementById('team2PointBtn');
+        const changeServeBtn = document.getElementById('changeServeBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const switchSidesBtn = document.getElementById('switchSidesBtn');
+        const tiebreakToggleBtn = document.getElementById('tiebreakToggleBtn');
+        const newGameBtn = document.getElementById('newGameBtn');
+        
+        const team1Container = document.getElementById('team1Container');
+        const team2Container = document.getElementById('team2Container');
+        
+        const endGameModal = document.getElementById('endGameModal');
+        const winnerDisplay = document.getElementById('winnerDisplay');
+        const finalScore = document.getElementById('finalScore');
+        const newGameModalBtn = document.getElementById('newGameModalBtn');
+        
+        const addPlayerBtn = document.getElementById('addPlayerBtn');
+        const newPlayerName = document.getElementById('newPlayerName');
+        const playerList = document.getElementById('playerList');
+        const matchHistory = document.getElementById('matchHistory');
+
+        // Вкладки
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Инициализация
+        initializePlayers();
+        populatePlayerSelects();
+
+        // Обработчики событий для настроек
+        gameTypeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                gameTypeButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                gameState.gameType = button.dataset.type;
+            });
+        });
+
+        gameTypeSelect.addEventListener('change', () => {
+            gameState.matchType = gameTypeSelect.value;
+            if (gameTypeSelect.value === 'doubles') {
+                team1Player2Select.style.display = 'block';
+                team2Player2Select.style.display = 'block';
+            } else {
+                team1Player2Select.style.display = 'none';
+                team2Player2Select.style.display = 'none';
+            }
+        });
+
+        setsCountSelect.addEventListener('change', () => {
+            const totalSets = parseInt(setsCountSelect.value);
+            gameState.totalSets = totalSets;
+            gameState.setsToWin = Math.ceil(totalSets / 2);
+            
+            matchFormatDisplay.textContent = `${totalSets} ${declOfNum(totalSets, ['сет', 'сета', 'сетов'])} (до ${gameState.setsToWin} побед)`;
+        });
+
+        tiebreakSelect.addEventListener('change', () => {
+            gameState.tiebreakSettings.mode = tiebreakSelect.value;
+            if (tiebreakSelect.value === 'custom') {
+                customTiebreakSettings.style.display = 'block';
+            } else {
+                customTiebreakSettings.style.display = 'none';
+            }
+        });
+
+        tiebreakScoreSelect.addEventListener('change', () => {
+            gameState.tiebreakSettings.startScore = tiebreakScoreSelect.value;
+        });
+
+        // Управление вкладками
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => {
+                    if (content.dataset.tab === tab.dataset.tab) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+                tab.classList.add('active');
+            });
+        });
+
+        // Обработчики для игры
+        startGameBtn.addEventListener('click', startGame);
+        team1PointBtn.addEventListener('click', () => addPoint('team1'));
+        team2PointBtn.addEventListener('click', () => addPoint('team2'));
+        changeServeBtn.addEventListener('click', changeServe);
+        undoBtn.addEventListener('click', undoLastAction);
+        switchSidesBtn.addEventListener('click', switchSides);
+        tiebreakToggleBtn.addEventListener('click', toggleTiebreak);
+        newGameBtn.addEventListener('click', resetGame);
+        newGameModalBtn.addEventListener('click', () => {
+            endGameModal.style.display = 'none';
+            resetGame();
+        });
+
+        // Управление игроками
+        addPlayerBtn.addEventListener('click', addPlayer);
+
+        // Функции для управления игроками
+        function initializePlayers() {
+            updatePlayerList();
+        }
+
+        function addPlayer() {
+            const name = newPlayerName.value.trim();
+            if (name === '') return;
+            
+            if (!players.includes(name)) {
+                players.push(name);
+                savePlayers();
+                populatePlayerSelects();
+                updatePlayerList();
+                newPlayerName.value = '';
+            } else {
+                alert('Игрок с таким именем уже существует');
+            }
+        }
+
+        function removePlayer(name) {
+            const index = players.indexOf(name);
+            if (index !== -1) {
+                players.splice(index, 1);
+                savePlayers();
+                populatePlayerSelects();
+                updatePlayerList();
+            }
+        }
+
+        function savePlayers() {
+            localStorage.setItem('players', JSON.stringify(players));
+        }
+
+        function updatePlayerList() {
+            playerList.innerHTML = '';
+            players.forEach(player => {
+                const playerItem = document.createElement('div');
+                playerItem.className = 'player-item';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = player;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Удалить';
+                removeBtn.addEventListener('click', () => removePlayer(player));
+                
+                playerItem.appendChild(nameSpan);
+                playerItem.appendChild(removeBtn);
+                playerList.appendChild(playerItem);
+            });
+        }
+
+        function populatePlayerSelects() {
+            const selects = [team1Player1Select, team1Player2Select, team2Player1Select, team2Player2Select];
+            
+            selects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Выберите игрока</option>';
+                
+                players.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player;
+                    option.textContent = player;
+                    select.appendChild(option);
+                });
+                
+                if (currentValue && players.includes(currentValue)) {
+                    select.value = currentValue;
+                }
+            });
+        }
+
+        // Продолжение функции startGame
+function startGame() {
+    // Проверка выбора игроков
+    const player1 = team1Player1Select.value;
+    const player2 = team2Player1Select.value;
+    
+    if (!player1 || !player2) {
+        alert('Пожалуйста, выберите игроков для обеих команд');
+        return;
+    }
+    
+    if (gameTypeSelect.value === 'doubles') {
+        const player3 = team1Player2Select.value;
+        const player4 = team2Player2Select.value;
+        
+        if (!player3 || !player4) {
+            alert('Пожалуйста, выберите всех игроков для парной игры');
+            return;
+        }
+        
+        gameState.team1.players = [player1, player3];
+        gameState.team2.players = [player2, player4];
+        gameState.team1.name = `${player1} / ${player3}`;
+        gameState.team2.name = `${player2} / ${player4}`;
+    } else {
+        gameState.team1.players = [player1, ''];
+        gameState.team2.players = [player2, ''];
+        gameState.team1.name = player1;
+        gameState.team2.name = player2;
+    }
+    
+    // Настройка игры
+    gameState.gameType = document.querySelector('.game-type button.active').dataset.type;
+    gameState.matchType = gameTypeSelect.value;
+    gameState.totalSets = parseInt(setsCountSelect.value);
+    gameState.setsToWin = Math.ceil(gameState.totalSets / 2);
+    gameState.tiebreakSettings.mode = tiebreakSelect.value;
+    
+    if (tiebreakSelect.value === 'custom') {
+        gameState.tiebreakSettings.startScore = tiebreakScoreSelect.value;
+    } else {
+        gameState.tiebreakSettings.startScore = '6-6';
+    }
+    
+    // Сброс счета
+    gameState.team1.sets = 0;
+    gameState.team1.games = 0;
+    gameState.team1.points = 0;
+    gameState.team2.sets = 0;
+    gameState.team2.games = 0;
+    gameState.team2.points = 0;
+    gameState.currentSet = 1;
+    gameState.isTiebreak = false;
+    gameState.isGameOver = false;
+    gameState.history = ['Начало матча'];
+    
+    // Обновление отображения
+    updateScoreDisplay();
+    updateMatchInfo();
+    updateServeDisplay();
+    updateMatchHistory();
+    
+    // Показ скорборда
+    gameSetup.style.display = 'none';
+    scoreboardContainer.style.display = 'block';
+}
+
+// Обновление отображения счета
+function updateScoreDisplay() {
+    team1NameDisplay.textContent = gameState.team1.name;
+    team2NameDisplay.textContent = gameState.team2.name;
+    
+    team1SetsDisplay.textContent = gameState.team1.sets;
+    team2SetsDisplay.textContent = gameState.team2.sets;
+    
+    team1GamesDisplay.textContent = gameState.team1.games;
+    team2GamesDisplay.textContent = gameState.team2.games;
+    
+    // Отображение очков в зависимости от режима (обычный или тай-брейк)
+    if (gameState.isTiebreak) {
+        team1PointsDisplay.textContent = gameState.team1.tiebreakPoints;
+        team2PointsDisplay.textContent = gameState.team2.tiebreakPoints;
+    } else {
+        team1PointsDisplay.textContent = pointsToDisplay(gameState.team1.points);
+        team2PointsDisplay.textContent = pointsToDisplay(gameState.team2.points);
+    }
+    
+    updateServeDisplay();
+}
+
+// Конвертация числовых очков в теннисную систему (0, 15, 30, 40, Ad)
+function pointsToDisplay(points) {
+    switch (points) {
+        case 0: return '0';
+        case 1: return '15';
+        case 2: return '30';
+        case 3: return '40';
+        case 4: return 'Ad';
+        default: return points.toString();
+    }
+}
+
+// Обновление информации о матче
+function updateMatchInfo() {
+    const gameTypeName = gameState.gameType === 'tennis' ? 'Теннис' : 'Падель';
+    const matchTypeName = gameState.matchType === 'singles' ? 'Одиночная игра' : 'Парная игра';
+    
+    matchTypeDisplay.textContent = `${gameTypeName} - ${matchTypeName}`;
+    matchFormatDisplay.textContent = `${gameState.totalSets} ${declOfNum(gameState.totalSets, ['сет', 'сета', 'сетов'])} (до ${gameState.setsToWin} побед)`;
+}
+
+// Обновление отображения подачи
+function updateServeDisplay() {
+    let serverName = '';
+    
+    if (gameState.matchType === 'singles') {
+        if (gameState.currentServer === 0) {
+            serverName = gameState.team1.players[0];
+            team1Container.classList.add('serving');
+            team2Container.classList.remove('serving');
+        } else {
+            serverName = gameState.team2.players[0];
+            team1Container.classList.remove('serving');
+            team2Container.classList.add('serving');
+        }
+    } else {
+        // Для парной игры
+        if (gameState.currentServer === 0) {
+            serverName = gameState.team1.players[0];
+            team1Container.classList.add('serving');
+            team2Container.classList.remove('serving');
+        } else if (gameState.currentServer === 1) {
+            serverName = gameState.team2.players[0];
+            team1Container.classList.remove('serving');
+            team2Container.classList.add('serving');
+        } else if (gameState.currentServer === 2) {
+            serverName = gameState.team1.players[1];
+            team1Container.classList.add('serving');
+            team2Container.classList.remove('serving');
+        } else {
+            serverName = gameState.team2.players[1];
+            team1Container.classList.remove('serving');
+            team2Container.classList.add('serving');
+        }
+    }
+    
+    currentServerDisplay.textContent = serverName;
+}
+
+// Функция добавления очка
+function addPoint(team) {
+    // Сохраняем текущее состояние для отмены
+    saveGameState();
+    
+    if (gameState.isGameOver) return;
+    
+    if (gameState.isTiebreak) {
+        addTiebreakPoint(team);
+    } else {
+        addNormalPoint(team);
+    }
+    
+    updateScoreDisplay();
+    checkMatchEnd();
+}
+
+// Добавление очка в обычном режиме
+function addNormalPoint(team) {
+    const teamObj = team === 'team1' ? gameState.team1 : gameState.team2;
+    const opponentObj = team === 'team1' ? gameState.team2 : gameState.team1;
+    
+    // Логика подсчета очков в гейме
+    teamObj.points++;
+    
+    // Запись в историю
+    addToHistory(`${teamObj.name} получает очко: ${pointsToDisplay(teamObj.points)}`);
+    
+    // Проверка на победу в гейме
+    if (teamObj.points >= 4 && teamObj.points >= opponentObj.points + 2) {
+        // Выигран гейм
+        teamObj.games++;
+        teamObj.points = 0;
+        opponentObj.points = 0;
+        
+        addToHistory(`${teamObj.name} выигрывает гейм: ${teamObj.games}-${opponentObj.games}`);
+        
+        // Сменить подачу
+        changeServe();
+        
+        // Проверка на начало тай-брейка
+        checkTiebreakStart();
+        
+        // Проверка на победу в сете
+        if (teamObj.games >= 6 && teamObj.games >= opponentObj.games + 2) {
+            teamObj.sets++;
+            addToHistory(`${teamObj.name} выигрывает сет ${gameState.currentSet}: ${teamObj.games}-${opponentObj.games}`);
+            
+            // Переход к следующему сету
+            if (teamObj.sets < gameState.setsToWin && opponentObj.sets < gameState.setsToWin) {
+                gameState.currentSet++;
+                gameState.team1.games = 0;
+                gameState.team2.games = 0;
+                gameState.isTiebreak = false;
+                
+                addToHistory(`Начало сета ${gameState.currentSet}`);
+            }
+        }
+    } else if (teamObj.points === 4 && opponentObj.points === 4) {
+        // При счете Advantage - Advantage, возвращаемся к 40-40
+        teamObj.points = 3;
+        opponentObj.points = 3;
+        
+        addToHistory('Возврат к счету "40-40"');
+    }
+}
+
+// Добавление очка в режиме тай-брейка
+function addTiebreakPoint(team) {
+    const teamObj = team === 'team1' ? gameState.team1 : gameState.team2;
+    const opponentObj = team === 'team1' ? gameState.team2 : gameState.team1;
+    
+    teamObj.tiebreakPoints++;
+    
+    addToHistory(`${teamObj.name} получает очко тай-брейка: ${teamObj.tiebreakPoints}`);
+    
+    // Смена подачи в тай-брейке
+    gameState.tiebreakPointCounter++;
+    if (gameState.tiebreakPointCounter % 2 === 1) {
+        changeTiebreakServe();
+    }
+    
+    // Проверка на победу в тай-брейке
+    if (teamObj.tiebreakPoints >= 7 && teamObj.tiebreakPoints >= opponentObj.tiebreakPoints + 2) {
+        teamObj.games++;
+        teamObj.sets++;
+        
+        addToHistory(`${teamObj.name} выигрывает тай-брейк: ${teamObj.tiebreakPoints}-${opponentObj.tiebreakPoints}`);
+        addToHistory(`${teamObj.name} выигрывает сет ${gameState.currentSet}: ${teamObj.games}-${opponentObj.games}`);
+        
+        // Переход к следующему сету
+        if (teamObj.sets < gameState.setsToWin && opponentObj.sets < gameState.setsToWin) {
+            gameState.currentSet++;
+            gameState.team1.games = 0;
+            gameState.team2.games = 0;
+            gameState.team1.tiebreakPoints = 0;
+            gameState.team2.tiebreakPoints = 0;
+            gameState.isTiebreak = false;
+            gameState.tiebreakPointCounter = 0;
+            
+            // После тай-брейка подача переходит
+            changeServe();
+            
+            addToHistory(`Начало сета ${gameState.currentSet}`);
+        }
+    }
+}
+
+// Проверка на начало тай-брейка
+function checkTiebreakStart() {
+    if (gameState.tiebreakSettings.mode === 'disabled') return;
+    
+    const tiebreakScore = gameState.tiebreakSettings.startScore;
+    const [games1, games2] = tiebreakScore.split('-').map(Number);
+    
+    if (gameState.team1.games === games1 && gameState.team2.games === games2) {
+        gameState.isTiebreak = true;
+        gameState.team1.tiebreakPoints = 0;
+        gameState.team2.tiebreakPoints = 0;
+        gameState.tiebreakPointCounter = 0;
+        gameState.tiebreakServer = gameState.currentServer;
+        
+        addToHistory('Начало тай-брейка');
+    }
+}
+
+// Смена подачи
+function changeServe() {
+    if (gameState.matchType === 'singles') {
+        // Для одиночной игры просто переключаем между двумя игроками
+        gameState.currentServer = gameState.currentServer === 0 ? 1 : 0;
+    } else {
+        // Для парной игры чередуем 4 игроков
+        gameState.currentServer = (gameState.currentServer + 1) % 4;
+    }
+    
+    updateServeDisplay();
+    addToHistory(`Подача переходит к ${currentServerDisplay.textContent}`);
+}
+
+// Смена подачи в тай-брейке
+function changeTiebreakServe() {
+    if (gameState.matchType === 'singles') {
+        gameState.currentServer = gameState.currentServer === 0 ? 1 : 0;
+    } else {
+        gameState.currentServer = (gameState.currentServer + 1) % 4;
+    }
+    
+    updateServeDisplay();
+}
+
+// Переключение режима тай-брейка
+function toggleTiebreak() {
+    gameState.isTiebreak = !gameState.isTiebreak;
+    
+    if (gameState.isTiebreak) {
+        gameState.team1.tiebreakPoints = 0;
+        gameState.team2.tiebreakPoints = 0;
+        gameState.tiebreakPointCounter = 0;
+        gameState.tiebreakServer = gameState.currentServer;
+        
+        addToHistory('Тай-брейк включен вручную');
+    } else {
+        addToHistory('Тай-брейк выключен вручную');
+    }
+    
+    updateScoreDisplay();
+}
+
+// Переключение сторон корта
+function switchSides() {
+    // Меняем местами команды
+    const temp = {...gameState.team1};
+    gameState.team1 = {...gameState.team2};
+    gameState.team2 = {...temp};
+    
+    // Обновляем, кто подает
+    if (gameState.currentServer === 0) {
+        gameState.currentServer = 1;
+    } else if (gameState.currentServer === 1) {
+        gameState.currentServer = 0;
+    } else if (gameState.currentServer === 2) {
+        gameState.currentServer = 3;
+    } else {
+        gameState.currentServer = 2;
+    }
+    
+    addToHistory('Команды меняются сторонами');
+    updateScoreDisplay();
+}
+
+// Сохранение истории состояний для отмены действий
+function saveGameState() {
+    const stateToSave = JSON.stringify(gameState);
+    gameState.history.push(stateToSave);
+    
+    // Ограничиваем размер истории для экономии памяти
+    if (gameState.history.length > 50) {
+        gameState.history = gameState.history.slice(-50);
+    }
+}
+
+// Отмена последнего действия
+function undoLastAction() {
+    if (gameState.history.length <= 1) return;
+    
+    const lastActionIndex = gameState.history.length - 1;
+    
+    // Если последняя запись - это строка состояния (JSON)
+    if (gameState.history[lastActionIndex].startsWith('{')) {
+        // Удаляем последнее действие из истории
+        gameState.history.pop();
+        
+        // Ищем последнее сохраненное состояние
+        let lastStateIndex = -1;
+        for (let i = gameState.history.length - 1; i >= 0; i--) {
+            if (gameState.history[i].startsWith('{')) {
+                lastStateIndex = i;
+                break;
+            }
+        }
+        
+        if (lastStateIndex !== -1) {
+            const savedState = gameState.history[lastStateIndex];
+            gameState = JSON.parse(savedState);
+            
+            // Удаляем сохраненное состояние из истории
+            gameState.history.splice(lastStateIndex, 1);
+            
+            addToHistory('Отменено последнее действие');
+            updateScoreDisplay();
+            updateMatchInfo();
+        }
+    } else {
+        // Если в истории нет сохраненных состояний, просто удаляем последнюю запись
+        gameState.history.pop();
+    }
+    
+    updateMatchHistory();
+}
+
+// Проверка на конец матча
+function checkMatchEnd() {
+    if (gameState.team1.sets >= gameState.setsToWin || gameState.team2.sets >= gameState.setsToWin) {
+        gameState.isGameOver = true;
+        
+        const winner = gameState.team1.sets > gameState.team2.sets ? gameState.team1 : gameState.team2;
+        const loser = gameState.team1.sets > gameState.team2.sets ? gameState.team2 : gameState.team1;
+        
+        addToHistory(`Матч окончен. Победитель: ${winner.name}`);
+        
+        // Показываем модальное окно с результатами
+        winnerDisplay.innerHTML = `<p>Победитель: <strong>${winner.name}</strong></p>`;
+        
+        let scoreDisplay = '<p>Счет по сетам: ';
+        if (gameState.team1.sets > gameState.team2.sets) {
+            scoreDisplay += `${gameState.team1.sets}:${gameState.team2.sets}`;
+        } else {
+            scoreDisplay += `${gameState.team2.sets}:${gameState.team1.sets}`;
+        }
+        scoreDisplay += '</p>';
+        
+        finalScore.innerHTML = scoreDisplay;
+        endGameModal.style.display = 'flex';
+    }
+}
+
+// Сброс игры
+function resetGame() {
+    gameSetup.style.display = 'block';
+    scoreboardContainer.style.display = 'none';
+    
+    // Сброс состояния
+    gameState = {
+        gameType: gameState.gameType,
+        matchType: gameState.matchType,
+        setsToWin: gameState.setsToWin,
+        tiebreakSettings: {...gameState.tiebreakSettings},
+        team1: {
+            name: 'Команда 1',
+            players: ['', ''],
+            sets: 0,
+            games: 0,
+            points: 0,
+            tiebreakPoints: 0
+        },
+        team2: {
+            name: 'Команда 2',
+            players: ['', ''],
+            sets: 0,
+            games: 0,
+            points: 0,
+            tiebreakPoints: 0
+        },
+        currentSet: 1,
+        totalSets: gameState.totalSets,
+        currentServer: 0,
+        isTiebreak: false,
+        tiebreakServer: 0,
+        tiebreakPointCounter: 0,
+        history: [],
+        isGameOver: false
+    };
+    
+    matchHistory.innerHTML = '<div class="history-item">Начало матча</div>';
+}
+
+// Добавление записи в историю матча
+function addToHistory(message) {
+    const historyItem = document.createElement('div');
+    historyItem.className = 'history-item';
+    historyItem.textContent = message;
+    
+    matchHistory.appendChild(historyItem);
+    matchHistory.scrollTop = matchHistory.scrollHeight;
+    
+    if (typeof message === 'string') {
+        gameState.history.push(message);
+    }
+}
+
+// Обновление отображения истории
+function updateMatchHistory() {
+    matchHistory.innerHTML = '';
+    
+    gameState.history.forEach(item => {
+        if (!item.startsWith('{')) {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = item;
+            matchHistory.appendChild(historyItem);
+        }
+    });
+    
+    matchHistory.scrollTop = matchHistory.scrollHeight;
+}
+
+// Склонение числительных
+function declOfNum(number, titles) {
+    const cases = [2, 0, 1, 1, 1, 2];
+    return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+}
+            
+			
+			
+			
